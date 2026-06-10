@@ -80,21 +80,26 @@ class SVDReader:
                         ]
                         if field.enumerated_values:
                             self.device[-1]["regs"][-1]["fields"][-1]["enums"] = []
-                            for enum in field.enumerated_values:
-                                self.device[-1]["regs"][-1]["fields"][-1]["enums"] += [
-                                    {
-                                        "name": enum.name,
-                                        "description": self.__item_description(enum),
-                                        "value": enum.value,
-                                    }
-                                ]
+                            for enums in field.enumerated_values:
+                                for enum in enums.enumerated_values:
+                                    self.device[-1]["regs"][-1]["fields"][-1][
+                                        "enums"
+                                    ] += [
+                                        {
+                                            "name": enum.name,
+                                            "description": self.__item_description(
+                                                enum
+                                            ),
+                                            "value": enum.value,
+                                        }
+                                    ]
             self.device[-1]["regs"] = sorted(
                 self.device[-1]["regs"], key=itemgetter("address_offset")
             )
         self.device = sorted(self.device, key=itemgetter("base_address"))
 
     def __item_description(self, item):
-        if item.description:
+        if hasattr(item, "description") and item.description:
             return " ".join(item.description.replace("\n", " ").split())
         else:
             return "No description"
