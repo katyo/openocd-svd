@@ -336,9 +336,10 @@ class MainWindow(QMainWindow):
             self.disconnect_openocd()
 
     def disconnect_openocd(self):
-        self.openocd_rt.stop()
-        while self.openocd_rt.is_executing:
-            pass
+        if self.openocd_rt is not None:
+            self.openocd_rt.stop()
+            while self.openocd_rt.is_executing:
+                pass
         self.openocd_tn.close()
         self.ui.act_connect.setText("Connect OpenOCD")
         self.ui.lab_status.setText("No connection")
