@@ -8,13 +8,16 @@
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 
+
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
         MainWindow.setWindowModality(QtCore.Qt.ApplicationModal)
         MainWindow.setEnabled(True)
         MainWindow.resize(768, 768)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
+        sizePolicy = QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding
+        )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(MainWindow.sizePolicy().hasHeightForWidth())
@@ -24,10 +27,14 @@ class Ui_MainWindow(object):
         MainWindow.setTabShape(QtWidgets.QTabWidget.Rounded)
         MainWindow.setUnifiedTitleAndToolBarOnMac(False)
         self.centralwidget = QtWidgets.QWidget(MainWindow)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred)
+        sizePolicy = QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred
+        )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.centralwidget.sizePolicy().hasHeightForWidth())
+        sizePolicy.setHeightForWidth(
+            self.centralwidget.sizePolicy().hasHeightForWidth()
+        )
         self.centralwidget.setSizePolicy(sizePolicy)
         self.centralwidget.setObjectName("centralwidget")
         self.verticalLayout_3 = QtWidgets.QVBoxLayout(self.centralwidget)
@@ -100,11 +107,19 @@ class Ui_MainWindow(object):
         self.act_quit.triggered.connect(MainWindow.close)
         self.act_open_svd.triggered.connect(MainWindow.handle_act_open_svd_triggered)
         self.act_about.triggered.connect(MainWindow.handle_act_about_triggered)
-        self.tabs_device.tabCloseRequested['int'].connect(MainWindow.handle_tab_periph_close)
+        self.tabs_device.tabCloseRequested["int"].connect(
+            MainWindow.handle_tab_periph_close
+        )
         self.act_connect.triggered.connect(MainWindow.handle_act_connect_triggered)
-        self.act_open_packed_svd.triggered.connect(MainWindow.handle_act_open_packed_svd_triggered)
-        self.act_autowrite.toggled['bool'].connect(MainWindow.handle_act_autowrite_toggled)
-        self.act_autoread.triggered['bool'].connect(MainWindow.handle_act_autoread_toggled)
+        self.act_open_packed_svd.triggered.connect(
+            MainWindow.handle_act_open_packed_svd_triggered
+        )
+        self.act_autowrite.toggled["bool"].connect(
+            MainWindow.handle_act_autowrite_toggled
+        )
+        self.act_autoread.triggered["bool"].connect(
+            MainWindow.handle_act_autoread_toggled
+        )
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):
@@ -121,23 +136,33 @@ class Ui_MainWindow(object):
         self.act_open_svd.setStatusTip(_translate("MainWindow", "Open SVD file"))
         self.act_open_svd.setShortcut(_translate("MainWindow", "Ctrl+O"))
         self.act_about.setText(_translate("MainWindow", "About"))
-        self.act_about.setStatusTip(_translate("MainWindow", "Show information about utility"))
+        self.act_about.setStatusTip(
+            _translate("MainWindow", "Show information about utility")
+        )
         self.act_connect.setText(_translate("MainWindow", "Connect OpenOCD"))
-        self.act_connect.setStatusTip(_translate("MainWindow", "Open/close connection to OpenOCD"))
+        self.act_connect.setStatusTip(
+            _translate("MainWindow", "Open/close connection to OpenOCD")
+        )
         self.act_connect.setShortcut(_translate("MainWindow", "Ctrl+E"))
-        self.act_open_packed_svd.setText(_translate("MainWindow", "Open SVD from packed"))
+        self.act_open_packed_svd.setText(
+            _translate("MainWindow", "Open SVD from packed")
+        )
         self.act_open_packed_svd.setShortcut(_translate("MainWindow", "Ctrl+Shift+O"))
-        self.act_autowrite.setText(_translate("MainWindow", "Write register after edit"))
-        self.actionAuto_read.setText(_translate("MainWindow", "Read page registers on halt"))
+        self.act_autowrite.setText(
+            _translate("MainWindow", "Write register after edit")
+        )
+        self.actionAuto_read.setText(
+            _translate("MainWindow", "Read page registers on halt")
+        )
         self.act_autoread.setText(_translate("MainWindow", "Read registers on halt"))
 
 
 if __name__ == "__main__":
     import sys
+
     app = QtWidgets.QApplication(sys.argv)
     MainWindow = QtWidgets.QMainWindow()
     ui = Ui_MainWindow()
     ui.setupUi(MainWindow)
     MainWindow.show()
     sys.exit(app.exec_())
-

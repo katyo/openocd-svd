@@ -8,6 +8,7 @@
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 
+
 class Ui_SVDDialog(object):
     def setupUi(self, SVDDialog):
         SVDDialog.setObjectName("SVDDialog")
@@ -20,7 +21,9 @@ class Ui_SVDDialog(object):
         self.verticalLayout.addWidget(self.tree_svd)
         self.btn_dialog = QtWidgets.QDialogButtonBox(SVDDialog)
         self.btn_dialog.setOrientation(QtCore.Qt.Horizontal)
-        self.btn_dialog.setStandardButtons(QtWidgets.QDialogButtonBox.Cancel|QtWidgets.QDialogButtonBox.Ok)
+        self.btn_dialog.setStandardButtons(
+            QtWidgets.QDialogButtonBox.Cancel | QtWidgets.QDialogButtonBox.Ok
+        )
         self.btn_dialog.setObjectName("btn_dialog")
         self.verticalLayout.addWidget(self.btn_dialog)
 
@@ -36,10 +39,10 @@ class Ui_SVDDialog(object):
 
 if __name__ == "__main__":
     import sys
+
     app = QtWidgets.QApplication(sys.argv)
     SVDDialog = QtWidgets.QDialog()
     ui = Ui_SVDDialog()
     ui.setupUi(SVDDialog)
     SVDDialog.show()
     sys.exit(app.exec_())
-

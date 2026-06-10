@@ -51,7 +51,7 @@ class OpenOCDTelnet:
             pass
         self.is_busy = True
         self.write_data(cmd)
-        retval = self.read_data().strip().split('\r\n')[-1].strip()
+        retval = self.read_data().strip().split("\r\n")[-1].strip()
         self.is_busy = False
         return retval
 
@@ -75,7 +75,7 @@ class OpenOCDTelnet:
 if __name__ == "__main__":
     openocd_tn = OpenOCDTelnet()
     openocd_tn.open()
-    if (openocd_tn.check_alive()):
+    if openocd_tn.check_alive():
         print(openocd_tn.get_target_name())
         print(openocd_tn.get_target_state())
         print("0x%08X" % openocd_tn.read_mem(0x00000000))

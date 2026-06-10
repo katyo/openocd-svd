@@ -9,20 +9,29 @@ Run (SVD path argument is optional):
 """
 
 # -- Imports ------------------------------------------------------------------
-import sys
-import os
 import functools
+import os
+import sys
 import threading
 import time
-from svd import SVDReader
-from openocd import OpenOCDTelnet
-from PyQt5.QtWidgets import (QApplication, QMainWindow, QDialog, QWidget,
-                             QFileDialog, QLabel, QTreeWidgetItem, QAction, QMenu)
-from ui_widgets import PeriphTab
-from ui_main import Ui_MainWindow
-from ui_about import Ui_AboutDialog
-from ui_svd import Ui_SVDDialog
 
+from openocd import OpenOCDTelnet
+from PyQt5.QtWidgets import (
+    QAction,
+    QApplication,
+    QDialog,
+    QFileDialog,
+    QLabel,
+    QMainWindow,
+    QMenu,
+    QTreeWidgetItem,
+    QWidget,
+)
+from svd import SVDReader
+from ui_about import Ui_AboutDialog
+from ui_main import Ui_MainWindow
+from ui_svd import Ui_SVDDialog
+from ui_widgets import PeriphTab
 
 # -- Global variables ---------------------------------------------------------
 VERSION = "1.0"
@@ -81,7 +90,9 @@ class MainWindow(QMainWindow):
         self.svd_dialog = QDialog(self)
         self.svd_dialog.ui = Ui_SVDDialog()
         self.svd_dialog.ui.setupUi(self.svd_dialog)
-        self.svd_dialog.ui.tree_svd.itemDoubleClicked.connect(self.handle_svd_dialog_item_double_clicked)
+        self.svd_dialog.ui.tree_svd.itemDoubleClicked.connect(
+            self.handle_svd_dialog_item_double_clicked
+        )
         self.svd_dialog.ui.tree_svd.headerItem().setText(0, "List of packed SVD")
 
         # Add some vars
@@ -105,9 +116,9 @@ class MainWindow(QMainWindow):
 
     def handle_act_open_svd_triggered(self):
         options = QFileDialog.Options()
-        fileName, _ = QFileDialog.getOpenFileName(self,
-                                                  "Open SVD file", "", "SVD Files (*.svd *.SVD *.xml)",
-                                                  options=options)
+        fileName, _ = QFileDialog.getOpenFileName(
+            self, "Open SVD file", "", "SVD Files (*.svd *.SVD *.xml)", options=options
+        )
         if fileName:
             self.open_svd_path(fileName)
 
@@ -124,7 +135,9 @@ class MainWindow(QMainWindow):
                 item1.is_vendor = False
                 item1.setText(0, filename)
                 item0.addChild(item1)
-        if self.svd_dialog.exec_() and (not self.svd_dialog.ui.tree_svd.currentItem().is_vendor):
+        if self.svd_dialog.exec_() and (
+            not self.svd_dialog.ui.tree_svd.currentItem().is_vendor
+        ):
             vendor = self.svd_dialog.ui.tree_svd.currentItem().parent().text(0)
             filename = self.svd_dialog.ui.tree_svd.currentItem().text(0)
             self.open_svd_packed(vendor, filename)
@@ -149,14 +162,22 @@ class MainWindow(QMainWindow):
                 periph_name = self.svd_reader.device[periph_num]["name"]
                 break
 
-        if (self.ui.tabs_device.findChild(QWidget, periph_name)):
-            self.ui.tabs_device.setCurrentWidget(self.ui.tabs_device.findChild(QWidget, periph_name))
+        if self.ui.tabs_device.findChild(QWidget, periph_name):
+            self.ui.tabs_device.setCurrentWidget(
+                self.ui.tabs_device.findChild(QWidget, periph_name)
+            )
         else:
             periph_tab = PeriphTab(self.svd_reader.device[periph_num])
             for i in range(0, periph_tab.tree_regs.topLevelItemCount()):
-                reg = periph_tab.tree_regs.itemWidget(periph_tab.tree_regs.topLevelItem(i), 1)
-                reg.btn_read.clicked.connect(functools.partial(self.handle_btn_read_clicked, index=i))
-                reg.btn_write.clicked.connect(functools.partial(self.handle_btn_write_clicked, index=i))
+                reg = periph_tab.tree_regs.itemWidget(
+                    periph_tab.tree_regs.topLevelItem(i), 1
+                )
+                reg.btn_read.clicked.connect(
+                    functools.partial(self.handle_btn_read_clicked, index=i)
+                )
+                reg.btn_write.clicked.connect(
+                    functools.partial(self.handle_btn_write_clicked, index=i)
+                )
             self.ui.tabs_device.addTab(periph_tab, periph_name)
             self.ui.tabs_device.setCurrentIndex(self.ui.tabs_device.count() - 1)
 
@@ -167,13 +188,15 @@ class MainWindow(QMainWindow):
             addr = periph.svd["base_address"] + reg.svd["address_offset"]
             try:
                 reg.setVal(self.openocd_tn.read_mem(addr))
-                self.ui.statusBar.showMessage("Read %s.%s @ 0x%08X - OK" % (periph.svd["name"],
-                                                                            reg.svd["name"],
-                                                                            addr))
+                self.ui.statusBar.showMessage(
+                    "Read %s.%s @ 0x%08X - OK"
+                    % (periph.svd["name"], reg.svd["name"], addr)
+                )
             except RuntimeError:
-                self.ui.statusBar.showMessage("Read %s.%s @ 0x%08X - Error" % (periph.svd["name"],
-                                                                               reg.svd["name"],
-                                                                               addr))
+                self.ui.statusBar.showMessage(
+                    "Read %s.%s @ 0x%08X - Error"
+                    % (periph.svd["name"], reg.svd["name"], addr)
+                )
 
     def handle_btn_write_clicked(self, index):
         if self.openocd_tn.is_opened:
@@ -182,14 +205,16 @@ class MainWindow(QMainWindow):
             addr = periph.svd["base_address"] + reg.svd["address_offset"]
             try:
                 self.openocd_tn.write_mem(addr, reg.val())
-                self.ui.statusBar.showMessage("Write %s.%s @ 0x%08X - OK" % (periph.svd["name"],
-                                                                             reg.svd["name"],
-                                                                             addr))
+                self.ui.statusBar.showMessage(
+                    "Write %s.%s @ 0x%08X - OK"
+                    % (periph.svd["name"], reg.svd["name"], addr)
+                )
 
             except RuntimeError:
-                self.ui.statusBar.showMessage("Write %s.%s @ 0x%08X - Error" % (periph.svd["name"],
-                                                                                reg.svd["name"],
-                                                                                addr))
+                self.ui.statusBar.showMessage(
+                    "Write %s.%s @ 0x%08X - Error"
+                    % (periph.svd["name"], reg.svd["name"], addr)
+                )
 
     def handle_tab_periph_close(self, num):
         widget = self.ui.tabs_device.widget(num)
@@ -224,7 +249,9 @@ class MainWindow(QMainWindow):
             self.setWindowTitle(os.path.basename(path) + " - " + self.windowTitle())
             self.__update_menu_view()
         except:
-            self.ui.statusBar.showMessage("Can't open %s - file is corrupted!" % os.path.basename(path))
+            self.ui.statusBar.showMessage(
+                "Can't open %s - file is corrupted!" % os.path.basename(path)
+            )
 
     def open_svd_packed(self, vendor, filename):
         try:
@@ -233,31 +260,47 @@ class MainWindow(QMainWindow):
             self.setWindowTitle(filename + " - " + self.windowTitle())
             self.__update_menu_view()
         except:
-            self.ui.statusBar.showMessage("Can't open %s - file is corrupted!" % filename)
+            self.ui.statusBar.showMessage(
+                "Can't open %s - file is corrupted!" % filename
+            )
 
     def __update_menu_view(self):
         for periph in self.svd_reader.device:
-                if periph["name"] == periph["group_name"]:
-                    self.ui.act_periph += [QAction(self)]
-                    self.ui.act_periph[-1].setObjectName(periph["name"])
-                    self.ui.act_periph[-1].setText(periph["name"])
-                    self.ui.act_periph[-1].triggered.connect(self.handle_act_periph_triggered)
-                    self.ui.menuView.addAction(self.ui.act_periph[-1])
+            if periph["name"] == periph["group_name"]:
+                self.ui.act_periph += [QAction(self)]
+                self.ui.act_periph[-1].setObjectName(periph["name"])
+                self.ui.act_periph[-1].setText(periph["name"])
+                self.ui.act_periph[-1].triggered.connect(
+                    self.handle_act_periph_triggered
+                )
+                self.ui.menuView.addAction(self.ui.act_periph[-1])
+            else:
+                if periph["group_name"] in [
+                    menu.objectName() for menu in self.ui.menu_periph
+                ]:
+                    menu_num = [
+                        menu.objectName() for menu in self.ui.menu_periph
+                    ].index(periph["group_name"])
                 else:
-                    if periph["group_name"] in [menu.objectName() for menu in self.ui.menu_periph]:
-                        menu_num = [menu.objectName() for menu in self.ui.menu_periph].index(periph["group_name"])
-                    else:
-                        self.ui.menu_periph += [QMenu(self.ui.menubar)]
-                        menu_num = -1
-                        self.ui.menu_periph[menu_num].setObjectName(periph["group_name"])
-                        self.ui.menu_periph[menu_num].setTitle(periph["group_name"])
-                        self.ui.menuView.addAction(self.ui.menu_periph[menu_num].menuAction())
-                        self.ui.menu_periph[menu_num].act_periph = []
-                    self.ui.menu_periph[menu_num].act_periph += [QAction(self)]
-                    self.ui.menu_periph[menu_num].act_periph[-1].setObjectName(periph["name"])
-                    self.ui.menu_periph[menu_num].act_periph[-1].setText(periph["name"])
-                    self.ui.menu_periph[menu_num].act_periph[-1].triggered.connect(self.handle_act_periph_triggered)
-                    self.ui.menu_periph[menu_num].addAction(self.ui.menu_periph[menu_num].act_periph[-1])
+                    self.ui.menu_periph += [QMenu(self.ui.menubar)]
+                    menu_num = -1
+                    self.ui.menu_periph[menu_num].setObjectName(periph["group_name"])
+                    self.ui.menu_periph[menu_num].setTitle(periph["group_name"])
+                    self.ui.menuView.addAction(
+                        self.ui.menu_periph[menu_num].menuAction()
+                    )
+                    self.ui.menu_periph[menu_num].act_periph = []
+                self.ui.menu_periph[menu_num].act_periph += [QAction(self)]
+                self.ui.menu_periph[menu_num].act_periph[-1].setObjectName(
+                    periph["name"]
+                )
+                self.ui.menu_periph[menu_num].act_periph[-1].setText(periph["name"])
+                self.ui.menu_periph[menu_num].act_periph[-1].triggered.connect(
+                    self.handle_act_periph_triggered
+                )
+                self.ui.menu_periph[menu_num].addAction(
+                    self.ui.menu_periph[menu_num].act_periph[-1]
+                )
 
     def connect_openocd(self):
         try:
@@ -277,10 +320,14 @@ class MainWindow(QMainWindow):
                 new_target_pc = self.openocd_target_pc
             else:
                 new_target_pc = self.openocd_tn.get_target_pc()
-            self.ui.lab_status.setText("Connected: %s | %s | 0x%08X" % (self.openocd_target,
-                                                                        self.openocd_target_state, new_target_pc))
+            self.ui.lab_status.setText(
+                "Connected: %s | %s | 0x%08X"
+                % (self.openocd_target, self.openocd_target_state, new_target_pc)
+            )
             if self.opt_autoread and self.ui.tabs_device.count():
-                if ((self.openocd_target_state == "halted") and (new_target_pc != self.openocd_target_pc)):
+                if (self.openocd_target_state == "halted") and (
+                    new_target_pc != self.openocd_target_pc
+                ):
                     self.ui.tabs_device.currentWidget().btn_readall.clicked.emit()
             self.openocd_target_pc = new_target_pc
 
@@ -298,7 +345,7 @@ class MainWindow(QMainWindow):
 
 
 # -- Standalone run -----------------------------------------------------------
-if __name__ == '__main__':
+if __name__ == "__main__":
     app = QApplication(sys.argv)
     main_window = MainWindow()
     if len(sys.argv) > 1:
