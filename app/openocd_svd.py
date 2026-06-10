@@ -266,7 +266,7 @@ class MainWindow(QMainWindow):
 
     def __update_menu_view(self):
         for periph in self.svd_reader.device:
-            if periph["name"] == periph["group_name"]:
+            if periph["name"] == periph["group_name"] or periph["group_name"] is None:
                 self.ui.act_periph += [QAction(self)]
                 self.ui.act_periph[-1].setObjectName(periph["name"])
                 self.ui.act_periph[-1].setText(periph["name"])
