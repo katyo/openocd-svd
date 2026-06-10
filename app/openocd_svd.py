@@ -248,7 +248,8 @@ class MainWindow(QMainWindow):
             self.svd_reader.parse_path(path)
             self.setWindowTitle(os.path.basename(path) + " - " + self.windowTitle())
             self.__update_menu_view()
-        except:
+        except Exception as e:
+            print(e)
             self.ui.statusBar.showMessage(
                 "Can't open %s - file is corrupted!" % os.path.basename(path)
             )
