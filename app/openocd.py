@@ -7,6 +7,17 @@ Connect to OpenOCD via Telnet
 import telnetlib
 
 
+def _parse_int(s):
+    if s.startswith("0x"):
+        return int(s[2:], 16)
+    elif s.startswith("0o"):
+        return int(s[2:], 8)
+    elif s.startswith("0b"):
+        return int(s[2:], 2)
+    else:
+        return int(s)
+
+
 class OpenOCDTelnet:
     def __init__(self):
         self.is_opened = False
@@ -66,7 +77,12 @@ class OpenOCDTelnet:
         return int(self.send_cmd("reg pc").split(":")[-1].strip(), 16)
 
     def read_mem(self, addr):
-        return int(self.send_cmd("mdw 0x%08x" % addr).split(":")[-1].strip(), 16)
+        res = self.send_cmd("mdw 0x%08x" % addr).split(":")
+        if len(res) > 1:
+            raddr = _parse_int(res[0].strip())
+            if raddr == addr:
+                return int(res[-1].strip(), 16)
+        return None
 
     def write_mem(self, addr, val):
         self.send_cmd("mww 0x%08x 0x%08x" % (addr, val))
