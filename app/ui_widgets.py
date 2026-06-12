@@ -378,8 +378,8 @@ class PeriphTab(QWidget):
         descr = tree_item.svd["description"]
         addr = tree_item.svd["address_offset"]
         if "access" in tree_item.svd.keys() and tree_item.svd["access"]:
-            temp = tree_item.svd["access"]
-            access = "<%s>" % (temp.split("-")[0][0] + temp.split("-")[1][0]).upper()
+            temp = tree_item.svd["access"].split("-")
+            access = "<%s>" % (temp[0][0] + temp[1][0]).upper()
         else:
             access = ""
         if "msb" in tree_item.svd.keys():

@@ -74,7 +74,9 @@ class SVDReader:
                                 "address_offset": reg.address_offset,
                                 "lsb": field.bit_offset,
                                 "msb": field.bit_offset + field.bit_width - 1,
-                                "access": field.access,
+                                "access": str(field.access)
+                                .replace("SVDAccessType.", "")
+                                .replace("_", "-"),
                                 "enums": None,
                             }
                         ]
