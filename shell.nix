@@ -9,10 +9,10 @@ let qtenv = qt5.env "myenv" (with qt5; [
     qtpfx = "${qtenv}/lib/qt-${qtver}";
 in mkShell {
   buildInputs = [
-    (python312.withPackages (pypkgs: with pypkgs; [
+    (python3.withPackages (pypkgs: with pypkgs; [
       cmsis-svd-ng
       pyqt5
-      #telnetlib3
+      telnetlib3
     ]))
   ];
   shellHook = ''
